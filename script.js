@@ -28,7 +28,7 @@ function placeMines() {
     }
 
     for (const position of bombsPlaced) {
-        cells[position].textContent = "B";
+        cells[position].textContent = "*";
     }
 }
 
@@ -40,7 +40,7 @@ function clearMinesweeper() {
 
 function placeNumbers() {
     for (let cell of cells) {
-        if (cell.textContent != "B") {
+        if (cell.textContent != "*") {
             cell.textContent = countBombsAround(cell);
         }
     }
@@ -61,11 +61,12 @@ function countBombsAround(cell) {
     ];
 
     for (const neighbor of neighbors) {
-        if (neighbor && neighbor.textContent === "B") {
+        if (neighbor && neighbor.textContent === "*") {
             counter++;
         }
     }
 
+    !counter && (counter = "");
     return counter;
 }
 
