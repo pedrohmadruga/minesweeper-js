@@ -14,6 +14,7 @@ for (let i = 0; i < CELLS_AMOUNT; i++) {
 
 const cells = document.querySelectorAll(".cell");
 const newGameButton = document.querySelector(".new_game_btn");
+const minesLeft = document.querySelector(".mines_left");
 
 function getNeighbors(cell) {
     return [
@@ -32,6 +33,7 @@ function startNewGame() {
     clearMinesweeper();
     placeMines();
     placeNumbers();
+    minesLeft.textContent = MINES_AMOUNT;
 }
 
 // Puts the mines on the board
@@ -192,13 +194,14 @@ gameContainer.addEventListener("contextmenu", function (event) {
     if (cell.dataset.cellState === "hidden") {
         cell.textContent = "🚩";
         cell.dataset.cellState = "flagged";
+        minesLeft.textContent--;
     } else if (cell.dataset.cellState === "flagged") {
         cell.textContent = "";
         cell.dataset.cellState = "hidden";
+        minesLeft.textContent++;
     }
 });
 
-//TODO: Mines left counter
 //TODO: Detect when all squares are cleared
 //TODO: Freeze board on defeat or victory
 // FIXME: Adjust cell reveal when there are no bombs around: not every cell is being revealed

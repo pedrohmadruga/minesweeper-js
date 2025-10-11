@@ -89,3 +89,20 @@ body {
     height: 100%;
     backface-visibility: hidden;
 }
+
+.current_time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.current_time .timer {
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.current_time .mines_left {
+    font-weight: bold;
+    margin-left: 4px;
+}
