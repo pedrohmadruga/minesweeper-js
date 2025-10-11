@@ -1,5 +1,5 @@
 const CELLS_AMOUNT = 81;
-const MINES_AMOUNT = 15;
+const MINES_AMOUNT = 10;
 const SIDE = Math.sqrt(CELLS_AMOUNT);
 
 const gameContainer = document.querySelector(".game_container");
@@ -7,8 +7,9 @@ const gameContainer = document.querySelector(".game_container");
 for (let i = 0; i < CELLS_AMOUNT; i++) {
     const cell = document.createElement("div");
     cell.classList.add("cell");
-    gameContainer.appendChild(cell);
     cell.dataset.cellValue = "";
+    cell.dataset.cellState = "hidden";
+    gameContainer.appendChild(cell);
 }
 
 const cells = document.querySelectorAll(".cell");
@@ -50,6 +51,7 @@ function clearMinesweeper() {
     for (let cell of cells) {
         cell.textContent = "";
         cell.dataset.cellValue = "";
+        cell.dataset.cellState = "hidden";
         cell.style.backgroundColor = "";
     }
 }
@@ -147,7 +149,7 @@ function revealAllNeighbours(cell) {
     const neighbors = getNeighbors(cell);
 
     for (const neighbor of neighbors) {
-        if (neighbor) {
+        if (neighbor && neighbor.dataset.cellState != "flagged") {
             neighbor.textContent = neighbor.dataset.cellValue;
             neighbor.style.backgroundColor = "rgb(206, 218, 222, 1)";
         }
@@ -157,12 +159,16 @@ function revealAllNeighbours(cell) {
 startNewGame();
 
 newGameButton.addEventListener("click", startNewGame);
+
 gameContainer.addEventListener("click", function (event) {
     const cell = event.target;
 
-    if (cell.classList.contains("cell")) {
-        cell.textContent = cell.dataset.cellValue || "";
-    }
+    if (!cell.classList.contains("cell")) return;
+
+    if (cell.dataset.cellState === "flagged") return;
+
+    cell.textContent = cell.dataset.cellValue || "";
+    cell.dataset.cellState = "revealed";
 
     if (cell.dataset.cellValue === "") {
         revealAllNeighbours(cell);
@@ -174,3 +180,25 @@ gameContainer.addEventListener("click", function (event) {
 
     cell.style.backgroundColor = "rgb(206, 218, 222, 1)";
 });
+
+gameContainer.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+    const cell = event.target;
+
+    if (!cell.classList.contains("cell")) return;
+
+    if (cell.dataset.cellState === "revealed") return;
+
+    if (cell.dataset.cellState === "hidden") {
+        cell.textContent = "🚩";
+        cell.dataset.cellState = "flagged";
+    } else if (cell.dataset.cellState === "flagged") {
+        cell.textContent = "";
+        cell.dataset.cellState = "hidden";
+    }
+});
+
+//TODO: Mines left counter
+//TODO: Detect when all squares are cleared
+//TODO: Freeze board on defeat or victory
+// FIXME: Adjust cell reveal when there are no bombs around: not every cell is being revealed
