@@ -71,13 +71,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(206, 218, 222, 1);
+    background-color: rgb(206, 218, 222, 0.9);
     position: relative;
     font-family: "Minesweeper", sans-serif;
 }
 
 .cell:hover {
-    background-color: rgb(206, 218, 222, 0.9);
+    background-color: rgb(206, 218, 222, 0.8);
 }
 
 .cell_front,

@@ -8,10 +8,24 @@ for (let i = 0; i < CELLS_AMOUNT; i++) {
     const cell = document.createElement("div");
     cell.classList.add("cell");
     gameContainer.appendChild(cell);
+    cell.dataset.cellValue = "";
 }
 
 const cells = document.querySelectorAll(".cell");
 const newGameButton = document.querySelector(".new_game_btn");
+
+function getNeighbors(cell) {
+    return [
+        getAboveCell(cell),
+        getBelowCell(cell),
+        getPreviousCell(cell),
+        getNextCell(cell),
+        getAboveLeftCell(cell),
+        getAboveRightCell(cell),
+        getBelowLeftCell(cell),
+        getBelowRightCell(cell),
+    ];
+}
 
 function startNewGame() {
     clearMinesweeper();
@@ -28,20 +42,22 @@ function placeMines() {
     }
 
     for (const position of bombsPlaced) {
-        cells[position].textContent = "*";
+        cells[position].dataset.cellValue = "*";
     }
 }
 
 function clearMinesweeper() {
     for (let cell of cells) {
         cell.textContent = "";
+        cell.dataset.cellValue = "";
+        cell.style.backgroundColor = "";
     }
 }
 
 function placeNumbers() {
     for (let cell of cells) {
-        if (cell.textContent != "*") {
-            cell.textContent = countBombsAround(cell);
+        if (cell.dataset.cellValue != "*") {
+            cell.dataset.cellValue = countBombsAround(cell);
         }
     }
 }
@@ -49,19 +65,10 @@ function placeNumbers() {
 function countBombsAround(cell) {
     let counter = 0;
 
-    const neighbors = [
-        getAboveCell(cell),
-        getBelowCell(cell),
-        getPreviousCell(cell),
-        getNextCell(cell),
-        getAboveLeftCell(cell),
-        getAboveRightCell(cell),
-        getBelowLeftCell(cell),
-        getBelowRightCell(cell),
-    ];
+    const neighbors = getNeighbors(cell);
 
     for (const neighbor of neighbors) {
-        if (neighbor && neighbor.textContent === "*") {
+        if (neighbor && neighbor.dataset.cellValue === "*") {
             counter++;
         }
     }
@@ -136,6 +143,34 @@ function getBelowRightCell(cell) {
     return cells[index + SIDE + 1];
 }
 
+function revealAllNeighbours(cell) {
+    const neighbors = getNeighbors(cell);
+
+    for (const neighbor of neighbors) {
+        if (neighbor) {
+            neighbor.textContent = neighbor.dataset.cellValue;
+            neighbor.style.backgroundColor = "rgb(206, 218, 222, 1)";
+        }
+    }
+}
+
 startNewGame();
 
 newGameButton.addEventListener("click", startNewGame);
+gameContainer.addEventListener("click", function (event) {
+    const cell = event.target;
+
+    if (cell.classList.contains("cell")) {
+        cell.textContent = cell.dataset.cellValue || "";
+    }
+
+    if (cell.dataset.cellValue === "") {
+        revealAllNeighbours(cell);
+    }
+
+    if (cell.dataset.cellValue === "*") {
+        alert("KABOOM! You lost!");
+    }
+
+    cell.style.backgroundColor = "rgb(206, 218, 222, 1)";
+});
