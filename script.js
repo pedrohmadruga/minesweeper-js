@@ -204,4 +204,5 @@ gameContainer.addEventListener("contextmenu", function (event) {
 
 //TODO: Detect when all squares are cleared
 //TODO: Freeze board on defeat or victory
+//TODO: Add timer
 // FIXME: Adjust cell reveal when there are no bombs around: not every cell is being revealed
