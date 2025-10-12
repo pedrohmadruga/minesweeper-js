@@ -1,6 +1,7 @@
 const CELLS_AMOUNT = 81;
 const MINES_AMOUNT = 10;
 const SIDE = Math.sqrt(CELLS_AMOUNT);
+const REVEALED_COLOR = "rgb(206, 218, 222, 1)";
 
 const gameContainer = document.querySelector(".game_container");
 
@@ -151,9 +152,14 @@ function revealAllNeighbours(cell) {
     const neighbors = getNeighbors(cell);
 
     for (const neighbor of neighbors) {
-        if (neighbor && neighbor.dataset.cellState != "flagged") {
+        if (neighbor && neighbor.dataset.cellState === "hidden") {
             neighbor.textContent = neighbor.dataset.cellValue;
-            neighbor.style.backgroundColor = "rgb(206, 218, 222, 1)";
+            neighbor.style.backgroundColor = REVEALED_COLOR;
+            neighbor.dataset.cellState = "revealed";
+
+            if (neighbor.dataset.cellValue === "") {
+                revealAllNeighbours(neighbor);
+            }
         }
     }
 }
@@ -180,7 +186,7 @@ gameContainer.addEventListener("click", function (event) {
         alert("KABOOM! You lost!");
     }
 
-    cell.style.backgroundColor = "rgb(206, 218, 222, 1)";
+    cell.style.backgroundColor = REVEALED_COLOR;
 });
 
 gameContainer.addEventListener("contextmenu", function (event) {
@@ -205,4 +211,3 @@ gameContainer.addEventListener("contextmenu", function (event) {
 //TODO: Detect when all squares are cleared
 //TODO: Freeze board on defeat or victory
 //TODO: Add timer
-// FIXME: Adjust cell reveal when there are no bombs around: not every cell is being revealed
