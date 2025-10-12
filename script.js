@@ -16,6 +16,11 @@ for (let i = 0; i < CELLS_AMOUNT; i++) {
 const cells = document.querySelectorAll(".cell");
 const newGameButton = document.querySelector(".new_game_btn");
 const minesLeft = document.querySelector(".mines_left");
+const modal = document.querySelector(".modal");
+const modalHeader = document.querySelector(".modal_header");
+const modalText = document.querySelector(".modal_text");
+const closeModalButton = document.querySelector(".close_modal");
+
 let revealedCounter;
 
 function getNeighbors(cell) {
@@ -37,6 +42,7 @@ function startNewGame() {
     placeNumbers();
     minesLeft.textContent = MINES_AMOUNT;
     revealedCounter = 0;
+    gameContainer.classList.remove("inactive");
 }
 
 // Puts the mines on the board
@@ -167,8 +173,11 @@ function revealAllNeighbours(cell) {
     }
 }
 
-function showEndGameModal(message) {
-    alert(message);
+function showEndGameModal(header, message) {
+    modalHeader.textContent = header;
+    modalText.textContent = message;
+    modal.classList.add("open");
+    gameContainer.classList.add("inactive");
 }
 
 startNewGame();
@@ -192,15 +201,20 @@ gameContainer.addEventListener("click", function (event) {
     cell.style.backgroundColor = REVEALED_COLOR;
 
     if (cell.dataset.cellValue === "*") {
-        showEndGameModal("Unfortunately, you lost! Better luck next time.");
+        showEndGameModal(
+            "KABOOM!",
+            "Unfortunately, you lost! Better luck next time."
+        );
         return;
     }
     revealedCounter++;
     console.log(revealedCounter);
 
     if (revealedCounter === CELLS_AMOUNT - MINES_AMOUNT) {
-        alert("Congratulations! You won!");
-        showEndGameModal(```Congratulations! You won with a time of {timer}```);
+        showEndGameModal(
+            "Victory!",
+            `Congratulations! You won with a time of (timer)`
+        );
     }
 });
 
@@ -221,6 +235,10 @@ gameContainer.addEventListener("contextmenu", function (event) {
         cell.dataset.cellState = "hidden";
         minesLeft.textContent++;
     }
+});
+
+closeModalButton.addEventListener("click", () => {
+    modal.classList.remove("open");
 });
 
 //TODO: Freeze board on defeat or victory
