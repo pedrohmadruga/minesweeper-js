@@ -167,6 +167,10 @@ function revealAllNeighbours(cell) {
     }
 }
 
+function showEndGameModal(message) {
+    alert(message);
+}
+
 startNewGame();
 
 newGameButton.addEventListener("click", startNewGame);
@@ -176,7 +180,7 @@ gameContainer.addEventListener("click", function (event) {
 
     if (!cell.classList.contains("cell")) return;
 
-    if (cell.dataset.cellState === "flagged") return;
+    if (cell.dataset.cellState != "hidden") return;
 
     cell.textContent = cell.dataset.cellValue || "";
     cell.dataset.cellState = "revealed";
@@ -188,7 +192,7 @@ gameContainer.addEventListener("click", function (event) {
     cell.style.backgroundColor = REVEALED_COLOR;
 
     if (cell.dataset.cellValue === "*") {
-        alert("KABOOM! You lost!");
+        showEndGameModal("Unfortunately, you lost! Better luck next time.");
         return;
     }
     revealedCounter++;
@@ -196,6 +200,7 @@ gameContainer.addEventListener("click", function (event) {
 
     if (revealedCounter === CELLS_AMOUNT - MINES_AMOUNT) {
         alert("Congratulations! You won!");
+        showEndGameModal(```Congratulations! You won with a time of {timer}```);
     }
 });
 
@@ -218,6 +223,5 @@ gameContainer.addEventListener("contextmenu", function (event) {
     }
 });
 
-//TODO: Detect when all squares are cleared
 //TODO: Freeze board on defeat or victory
 //TODO: Add timer
