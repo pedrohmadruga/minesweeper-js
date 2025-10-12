@@ -20,8 +20,14 @@ const modal = document.querySelector(".modal");
 const modalHeader = document.querySelector(".modal_header");
 const modalText = document.querySelector(".modal_text");
 const closeModalButton = document.querySelector(".close_modal");
+const timerEl = document.querySelectorAll(".timer");
+const lowestTimeEl = document.querySelector(".lowest_time");
 
-let revealedCounter;
+let revealedCounter,
+    timeCounter,
+    counterInterval,
+    highscore = 0,
+    gameWon = false;
 
 function getNeighbors(cell) {
     return [
@@ -42,7 +48,26 @@ function startNewGame() {
     placeNumbers();
     minesLeft.textContent = MINES_AMOUNT;
     revealedCounter = 0;
+    timeCounter = 0;
+    gameWon = false;
+    clearInterval(counterInterval);
     gameContainer.classList.remove("inactive");
+
+    counterInterval = setInterval(() => {
+        timeCounter++;
+        timerEl.forEach(timer => {
+            timer.textContent = convertTimer(timeCounter);
+        });
+    }, 1000);
+}
+
+function convertTimer(timeCounter) {
+    const minutes = Math.trunc(timeCounter / 60)
+        .toString()
+        .padStart(2, 0);
+    const seconds = (timeCounter - minutes * 60).toString().padStart(2, 0);
+
+    return `${minutes}:${seconds}`;
 }
 
 // Puts the mines on the board
@@ -178,6 +203,12 @@ function showEndGameModal(header, message) {
     modalText.textContent = message;
     modal.classList.add("open");
     gameContainer.classList.add("inactive");
+    clearInterval(counterInterval);
+
+    if (gameWon && (highscore === 0 || highscore > timeCounter)) {
+        highscore = timeCounter;
+        lowestTimeEl.textContent = convertTimer(highscore);
+    }
 }
 
 startNewGame();
@@ -208,12 +239,14 @@ gameContainer.addEventListener("click", function (event) {
         return;
     }
     revealedCounter++;
-    console.log(revealedCounter);
 
     if (revealedCounter === CELLS_AMOUNT - MINES_AMOUNT) {
+        gameWon = true;
         showEndGameModal(
             "Victory!",
-            `Congratulations! You won with a time of (timer)`
+            `Congratulations! You won with a time of ${convertTimer(
+                timeCounter
+            )}`
         );
     }
 });
@@ -240,6 +273,3 @@ gameContainer.addEventListener("contextmenu", function (event) {
 closeModalButton.addEventListener("click", () => {
     modal.classList.remove("open");
 });
-
-//TODO: Freeze board on defeat or victory
-//TODO: Add timer
