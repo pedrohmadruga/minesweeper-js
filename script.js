@@ -16,6 +16,7 @@ for (let i = 0; i < CELLS_AMOUNT; i++) {
 const cells = document.querySelectorAll(".cell");
 const newGameButton = document.querySelector(".new_game_btn");
 const minesLeft = document.querySelector(".mines_left");
+let revealedCounter;
 
 function getNeighbors(cell) {
     return [
@@ -35,6 +36,7 @@ function startNewGame() {
     placeMines();
     placeNumbers();
     minesLeft.textContent = MINES_AMOUNT;
+    revealedCounter = 0;
 }
 
 // Puts the mines on the board
@@ -160,6 +162,7 @@ function revealAllNeighbours(cell) {
             if (neighbor.dataset.cellValue === "") {
                 revealAllNeighbours(neighbor);
             }
+            revealedCounter++;
         }
     }
 }
@@ -182,11 +185,18 @@ gameContainer.addEventListener("click", function (event) {
         revealAllNeighbours(cell);
     }
 
+    cell.style.backgroundColor = REVEALED_COLOR;
+
     if (cell.dataset.cellValue === "*") {
         alert("KABOOM! You lost!");
+        return;
     }
+    revealedCounter++;
+    console.log(revealedCounter);
 
-    cell.style.backgroundColor = REVEALED_COLOR;
+    if (revealedCounter === CELLS_AMOUNT - MINES_AMOUNT) {
+        alert("Congratulations! You won!");
+    }
 });
 
 gameContainer.addEventListener("contextmenu", function (event) {
